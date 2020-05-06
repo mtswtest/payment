@@ -17,7 +17,8 @@
 		  <br>
           <h2>Checkout</h2> 
         </div>
-        <form>
+      </div>		
+	  <form>
           <div class="products">
             <h3 class="title">Cart</h3>
             <div class="item">
@@ -32,27 +33,24 @@
           </div>
           <div class="card-details"> 
             <h3 class="title">Card Payment</h3> 
-              <div class="form-group"> 
-				<label class="title">Select Reader Type:</label> 
+			<div class="form-group"> 
+				<label class="title">Reader Type:&nbsp&nbsp</label> 
 				<div class="custom-control custom-radio custom-control-inline">
-				  <input type="radio" class="custom-control-input" id="DynaFlexWebSocket" name="DeviceType" checked>
-				  <label class="custom-control-label" for="DynaFlexWebSocket">DynaFlex (WebSocket)</label>
+					<input type="radio" class="custom-control-input" id="DynaFlexWebSocket" name="DeviceType" checked>
+					<label class="custom-control-label" for="DynaFlexWebSocket">DynaFlex (WebSocket)</label>
 				</div>
 				<div class="custom-control custom-radio custom-control-inline">
-				  <input type="radio" class="custom-control-input" id="DynaFlexUSBHID" name="DeviceType">
-				  <label class="custom-control-label" for="DynaFlexUSBHID">DynaFlex (USB/HID)</label>
+					<input type="radio" class="custom-control-input" id="DynaFlexUSBHID" name="DeviceType">
+					<label class="custom-control-label" for="DynaFlexUSBHID">DynaFlex (USB/HID)</label>
 				</div>
-              </div>
-                <button type="button" class="btn btn-primary btn-block">Connect</button>
-				<button type="button" class="btn btn-danger btn-block">Disconnect</button>
-				<button type="button" class="btn btn-success btn-block">Start </button>
-				<button type="button" class="btn btn-warning btn-block">Cancel</button>
-              </div>
-            
-          </div>
+			</div>
+			<button type="button" class="btn btn-primary btn-block">Connect</button>
+			<button type="button" class="btn btn-danger btn-block">Disconnect</button>
+			<button type="button" class="btn btn-success btn-block">Start </button>
+			<button type="button" class="btn btn-warning btn-block">Cancel</button>
+		</div>
         </form>
-      </div>
-    </section>
+	</section>
   </main>
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
