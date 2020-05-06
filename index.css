@@ -140,6 +140,15 @@
     } 
 }
 
+body {
+  padding: 1em 1em 0;
+  .fa {
+    font-size: 3em;
+    width: 2em;
+    height: 1.5em;
+    text-align: center;
+  }
+}
 
 @fa-cc-amex: #007bc1;
 @fa-cc-diners-club: #004A97;
