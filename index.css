@@ -139,3 +139,13 @@
     	margin-top: 2em; 
     } 
 }
+
+@fa-cc-amex: #007bc1;
+@fa-cc-diners-club: #004A97;
+@fa-cc-discover: #f68121;
+@fa-cc-jcb: #003A8F;
+@fa-cc-mastercard: #0a3a82;
+@fa-cc-paypal: #253b80;
+@fa-cc-stripe: #00afe1;
+@fa-cc-visa: #0157a2;
+
