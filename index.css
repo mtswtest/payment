@@ -148,3 +148,37 @@
 @fa-cc-paypal: #253b80;
 @fa-cc-stripe: #00afe1;
 @fa-cc-visa: #0157a2;
+
+.fa {
+  // Default color for undefined
+  color: #efefef;
+  &.fa-500px {
+    color: @fa-500px;
+  }
+
+  &.fa-cc-amex {
+    color: @fa-cc-amex;
+  }
+  &.fa-cc-diners-club {
+    color: @fa-cc-diners-club;
+  }
+  &.fa-cc-discover {
+    color: @fa-cc-discover;
+  }
+  &.fa-cc-jcb {
+    color: @fa-cc-jcb;
+  }
+  &.fa-cc-mastercard {
+    color: @fa-cc-mastercard;
+  }
+  &.fa-cc-paypal {
+    color: @fa-cc-paypal;
+  }
+  &.fa-cc-stripe {
+    color: @fa-cc-stripe;
+  }
+  &.fa-cc-visa {
+    color: @fa-cc-visa;
+  }
+}
+
