@@ -62,7 +62,7 @@
 						</div>
 					</div>					
 				</div>	
-				<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modalConnect">Connect to Reader</button>
+				<button type="button" class="btn btn-primary btn-block" onClick="showModalConnect()">Connect to Reader</button>
 				<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#modalStart">Start Transaction</button>
 			</div>
 
@@ -70,6 +70,13 @@
 		</div>
         </form>
 	</section>
+	
+	<script>
+		function showModalConnect() {
+			$("#modalConnect").modal();
+			$('#connectionStatus').text('OPENING ...');
+		}
+	</script>
 	
 	<!-- Modal -->
 	<div class="modal fade" id="modalConnect" tabindex="-1" role="dialog" aria-labelledby="modalConnectTitle"
@@ -93,7 +100,7 @@
 					<div class="spinner-border text-primary"></div>
 				</div>			  
 				<div class="col-sm-8">
-					<p class="text-primary" style="margin-bottom:18px">Connecting to Reader ...</p>	 
+					<p class="text-primary" id="connectionStatus" style="margin-bottom:18px">Connecting to Reader ...</p>	 
 				</div>
 			</div>
 		  </div> 
