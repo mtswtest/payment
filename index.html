@@ -74,10 +74,12 @@
 	<script>
 		function showModalConnect() {
 			$("#modalConnect").modal();
-			var deviceTypeString = 'DynaFlex (WebSocket)';
+			var deviceTypeString = 'Reader';
+			if ($(DynaFlexWebSocket).checked == true) 
+				vdeviceTypeString = 'DynaFlex (WebSocket)';
 			if ($(DynaFlexUSBHID).checked == true) 
 				deviceTypeString = 'DynaFlex (USB/HID)';
-			$('#connectionStatus').text('Connecting to ' + deviceTypeString + ' ...');
+			$('#connectionStatus').text('Connecting to ' + deviceTypeString + ' . . . ');
 		}
 	</script>
 	
@@ -103,7 +105,7 @@
 					<div class="spinner-border text-primary"></div>
 				</div>			  
 				<div class="col-sm-10"> 
-					<p class="text-primary" id="connectionStatus" style="margin-bottom:18px">Connecting to Reader ...</p>	 
+					<p class="text-primary" id="connectionStatus" style="margin-bottom:18px">Connecting ...</p>	 
 				</div>
 			</div>
 		  </div> 
