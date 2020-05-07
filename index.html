@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
   <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="index.css">
+  <script src="dynaflex.js"></script>	 
+  <script src="tlvparser.js"></script>	
 </head>
 <body>
   <main class="page payment-page">
@@ -82,7 +84,22 @@
 			else if (typeUSBHID[0].checked) 
 				deviceModel = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
+			connect();
 		}
+		
+		function connect() {
+			console.log('start reader');
+			reader = new dynaflex(readerCallback);
+			
+			onsole.log('open reader');
+			await reader.open();
+		}
+		
+		function readerCallback(evenType, eventData) {
+			console.log('Reader: [' + evenType + "]: " + eventData);
+
+		}
+
 	</script>
 	
 	<!-- Modal -->
