@@ -26,7 +26,7 @@ var dynaflex = (function () {
 	
 	dynaflex.prototype.processData = function(data) {
 		console.log('processData: ' + data);	
-		sendEvent('data', data);
+		context.sendEvent('data', data);
 	};
 	 
 	var handleInputReport = function(e) {
@@ -59,7 +59,7 @@ var dynaflex = (function () {
 	
 		await this.device.open().then(() => {
 			console.log('Opened HID device');
-			sendEvent('state', 'connected');
+			context.sendEvent('state', 'connected');
 
 			this.device.addEventListener('inputreport', function(e) {
 					let responseValue = e.data;
