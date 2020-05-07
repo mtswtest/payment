@@ -75,7 +75,7 @@
 		function showModalConnect() {
 			$("#modalConnect").modal();
 			var deviceTypeString = 'DynaFlex (WebSocket)';
-			if ($(DynaFlexUSBHID).checked) 
+			if ($(DynaFlexUSBHID).checked == true) 
 				deviceTypeString = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceTypeString + ' ...');
 		}
