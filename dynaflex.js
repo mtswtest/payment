@@ -20,13 +20,13 @@ var dynaflex = (function () {
         this.SINGLE_DATA_SIZE = 62;
     };
 	
-	dynaflex.prototype.dispatchEvent = function(eventType, eventData) {
+	dynaflex.prototype.sendEvent = function(eventType, eventData) {
 		context.eventCallback(eventType, eventData);
 	};
 	
 	dynaflex.prototype.processData = function(data) {
 		console.log('processData: ' + data);	
-		dispatchEvent('data', data);
+		sendEvent('data', data);
 	};
 	 
 	var handleInputReport = function(e) {
@@ -59,7 +59,7 @@ var dynaflex = (function () {
 	
 		await this.device.open().then(() => {
 			console.log('Opened HID device');
-			dispatchEvent('state', 'connected');
+			sendEvent('state', 'connected');
 
 			this.device.addEventListener('inputreport', function(e) {
 					let responseValue = e.data;
