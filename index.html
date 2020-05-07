@@ -76,7 +76,7 @@
 			$("#modalConnect").modal();
 			var deviceTypeString = 'Reader';
 			if ($(DynaFlexWebSocket).checked == true) 
-				vdeviceTypeString = 'DynaFlex (WebSocket)';
+				vdeviceTypeString = 'DynaFlex (WebSocket)'; 
 			if ($(DynaFlexUSBHID).checked == true) 
 				deviceTypeString = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceTypeString + ' . . . ');
