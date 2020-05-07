@@ -77,9 +77,9 @@
 			var deviceModel = 'Reader';
 			var typeWebSocket = $('#typeWebSocket');
 			var typeUSBHID = $('#typeUSBHID');
-			if (typeWebSocket.checked) 
+			if (typeWebSocket[0].checked) 
 				deviceModel = 'DynaFlex (WebSocket)'; 
-			else if (typeUSBHID.checked) 
+			else if (typeUSBHID[0].checked) 
 				deviceModel = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
 		}
