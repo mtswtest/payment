@@ -85,7 +85,7 @@
 				deviceModel = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
 			connect();
-		}
+		};
 		
 		function connect() {
 			console.log('start reader');
@@ -93,13 +93,12 @@
 			
 			onsole.log('open reader');
 			await reader.open();
-		}
+		};
 		
 		function readerCallback(evenType, eventData) {
 			console.log('Reader: [' + evenType + "]: " + eventData);
 
-		}
-
+		};
 	</script>
 	
 	<!-- Modal -->
