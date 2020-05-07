@@ -53,12 +53,12 @@
 					</div>
 					<div class="col-sm-8">
 						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="DynaFlexWebSocket" name="DeviceType" checked>
-							<label class="custom-control-label" for="DynaFlexWebSocket">DynaFlex (WebSocket)</label>
+							<input type="radio" class="custom-control-input" id="typeWebSocket" name="deviceType" checked>
+							<label class="custom-control-label" for="typeWebSocket">DynaFlex (WebSocket)</label>
 						</div>
 						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="DynaFlexUSBHID" name="DeviceType">
-							<label class="custom-control-label" for="DynaFlexUSBHID">DynaFlex (USB/HID)</label>
+							<input type="radio" class="custom-control-input" id="typeUSBHID" name="deviceType">
+							<label class="custom-control-label" for="typeUSBHID">DynaFlex (USB/HID)</label>
 						</div> 
 					</div>					
 				</div>	
@@ -74,12 +74,12 @@
 	<script>
 		function showModalConnect() {
 			$("#modalConnect").modal();
-			var deviceTypeString = 'Reader';
-			if ($(DynaFlexWebSocket).checked == true) 
-				vdeviceTypeString = 'DynaFlex (WebSocket)'; 
-			if ($(DynaFlexUSBHID).checked == true) 
-				deviceTypeString = 'DynaFlex (USB/HID)';
-			$('#connectionStatus').text('Connecting to ' + deviceTypeString + ' . . . ');
+			var deviceModel = 'Reader';
+			if ($('#typeWebSocket').checked == true) 
+				deviceModel = 'DynaFlex (WebSocket)'; 
+			if ($('#typeUSBHID').checked == true) 
+				deviceModel = 'DynaFlex (USB/HID)';
+			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
 		}
 	</script>
 	
