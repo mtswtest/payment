@@ -75,9 +75,11 @@
 		function showModalConnect() {
 			$('#modalConnect').modal();
 			var deviceModel = 'Reader';
-			if ($('#typeWebSocket').checked) 
+			var typeWebSocket = $('#typeWebSocket');
+			var typeUSBHID = $('#typeUSBHID');
+			if (typeWebSocket.checked) 
 				deviceModel = 'DynaFlex (WebSocket)'; 
-			else if ($('#typeUSBHID').checked) 
+			else if (typeUSBHID.checked) 
 				deviceModel = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
 		}
