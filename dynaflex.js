@@ -55,7 +55,6 @@ var dynaflex = (function () {
 			return;
 		  }
 		 
-		
         console.log(this.device.productName);
 		
 	
