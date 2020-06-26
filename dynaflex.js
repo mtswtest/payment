@@ -81,7 +81,14 @@ var dynaflex = (function () {
     };
 	
 	dynaflex.prototype.close = function () {
-
+		console.log('Closing HID device');
+								
+		if (this.hiddevice != null)
+		{
+			this.hiddevice.close();
+			context.sendEvent('state', 'disconnected');
+			console.log('Closed HID device');
+		}
     };
 	
     dynaflex.prototype.send = function (data) {
