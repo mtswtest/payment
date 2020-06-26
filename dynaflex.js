@@ -55,11 +55,11 @@ var dynaflex = (function () {
 			return;
 		  }
 		 
-        //console.log(this.device.productId);		 
-        //console.log(this.device.productName);
+        console.log(this.hiddevice.productId);		 
+        console.log(this.hiddevice.productName);
 		
 	
-		await this.device.open().then(() => {
+		await this.hiddevice.open().then(() => {
 			console.log('Opened HID device');
 			context.sendEvent('state', 'connected');
 
