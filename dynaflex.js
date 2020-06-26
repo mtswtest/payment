@@ -3,7 +3,7 @@
 var dynaflex = (function () {
 	var context = null;
 	var url = null;
-	var hiddevice;
+	var hiddevice null;
 	var wsdevice = null;
 	
     function dynaflex(url, callback) {
@@ -55,7 +55,7 @@ var dynaflex = (function () {
 			return;
 		  }
 		 
-		console.log(this.device.productId);
+		
         console.log(this.device.productName);
 		
 	
