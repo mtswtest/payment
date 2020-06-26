@@ -64,7 +64,7 @@
 						</div>  
 					</div>					
 				</div>	
-				<button type="button" class="btn btn-primary btn-block" onClick="showModalConnect();">Connect to Reader</button>
+				<button type="button" class="btn btn-primary btn-block" id="connectButton" onClick="showModalConnect();">Connect to Reader</button>
 				<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#modalStart">Start Transaction</button>
 			</div>
   
@@ -103,6 +103,11 @@
 				if (eventData == 'connected')
 				{
 					$('#connectionStatus').text('Connected to device');
+					$('#connectButton').text('Disconnect');
+				}
+				else if (eventData == 'disconnected')
+				{
+					$('#connectionStatus').text('Disconnected from device');
 				}
 			}
 
