@@ -23,7 +23,7 @@ var dynaflex = (function () {
     };
 	
 	dynaflex.prototype.sendEvent = function(eventType, eventData) {
-		context.eventCallback(eventType, eventData);
+		this.eventCallback(eventType, eventData);
 	};
 	
 	dynaflex.prototype.processData = function(data) {
