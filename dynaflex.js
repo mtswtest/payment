@@ -55,7 +55,8 @@ var dynaflex = (function () {
 			return;
 		  }
 		 
-        console.log(this.device.productName);
+        //console.log(this.device.productId);		 
+        //console.log(this.device.productName);
 		
 	
 		await this.device.open().then(() => {
