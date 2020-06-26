@@ -3,7 +3,7 @@
 var dynaflex = (function () {
 	var context = null;
 	var url = null;
-	var hiddevice null;
+	var hiddevice = null;
 	var wsdevice = null;
 	
     function dynaflex(url, callback) {
