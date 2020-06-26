@@ -89,7 +89,7 @@
 		
 		async function connect() {
 			console.log('start reader');
-			reader = new dynaflex(readerCallback);
+			reader = new dynaflex("", readerCallback);
 			
 			console.log('open reader');
 			await reader.open();
