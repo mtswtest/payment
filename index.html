@@ -25,14 +25,14 @@
           <div class="products">
             <h3 class="title">Cart</h3>
             <div class="item">
-              <span class="price">$200</span>
+              <span class="price">$10</span>
               <p class="item-name">Product 1</p>
             </div>
             <div class="item"> 
-              <span class="price">$120</span> 
+              <span class="price">$20</span> 
               <p class="item-name">Product 2</p>
             </div>
-            <div class="total">Total<span class="price">$320</span></div> 
+            <div class="total">Total<span class="price">$30</span></div> 
           </div>
           <div class="card-details"> 
 			  <div class="row">
@@ -95,8 +95,16 @@
 			await reader.open();
 		};
 		
-		function readerCallback(evenType, eventData) {
+		function readerCallback(eventType, eventData) {
 			console.log('Reader: [' + evenType + "]: " + eventData);
+			
+			if (eventType == 'state')
+			{
+				if (eventData == 'connected')
+				{
+					$('#connectionStatus').text('Connected to device');
+				}
+			}
 
 		};
 	</script>

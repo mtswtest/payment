@@ -1,13 +1,15 @@
-// connection type definitions:
-var connectionType = { WS: 0, HID: 1};
+
 
 var dynaflex = (function () {
 	var context = null;
+	var url = null;
+	var hiddevice;
+	var wsdevice = null;
 	
-    function dynaflex(callback) {
+    function dynaflex(url, callback) {
 		context = this;		
 		this.eventCallback = callback;
-		this.device = null; 
+		this.hiddevice = null; 
 				
         this.PACKET_TYPE_SINGLE_DATA = 0; 
         this.PACKET_TYPE_START_DATA = 1;
@@ -47,7 +49,7 @@ var dynaflex = (function () {
 
 		try {
 			const devices = await navigator.hid.requestDevice(requestParams);
-			this.device = devices[0];
+			this.hiddevice = devices[0];
 		  } catch (error) {
 			console.warn('No device access granted', error);
 			return;
@@ -61,7 +63,7 @@ var dynaflex = (function () {
 			console.log('Opened HID device');
 			context.sendEvent('state', 'connected');
 
-			this.device.addEventListener('inputreport', function(e) {
+			this.hiddevice.addEventListener('inputreport', function(e) {
 					let responseValue = e.data;
 					console.log('Device Response: ' + responseValue);
 					console.log('Length: ' + responseValue.byteLength);
@@ -89,7 +91,7 @@ var dynaflex = (function () {
             {
                 var packet = packets[i];
 				console.log('sending packet: ' + packet);	
-				this.device.sendReport(0x00, packet).then(() => {
+				this.hiddevice.sendReport(0x00, packet).then(() => {
 					console.log('Packet sent');;	
 				});
             }
