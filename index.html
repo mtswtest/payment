@@ -64,7 +64,7 @@
 						</div>  
 					</div>					
 				</div>	
-				<button type="button" class="btn btn-primary btn-block" id="connectButton" onClick="showModalConnect();">Connect to Reader</button>
+				<button type="button" class="btn btn-primary btn-block" id="connectButton" onClick="onClickConnectButton();">Connect</button>
 				<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#modalStart">Start Transaction</button>
 			</div>
   
@@ -74,6 +74,18 @@
 	</section>   
 	
 	<script>
+		function onClickConnectButton() {
+
+			if ($('#connectButton').text == "Connect")
+			{
+				connect();
+			}
+			else
+			{
+				disconnect();
+			}
+		};
+		
 		function showModalConnect() {
 			$('#modalConnect').modal();
 			var deviceModel = 'Reader';
@@ -84,15 +96,27 @@
 			else if (typeUSBHID[0].checked) 
 				deviceModel = 'DynaFlex (USB/HID)';
 			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
-			connect();
 		};
 		
 		async function connect() {
-			console.log('start reader');
+			console.log('connecting to reader');
+			
+			showModalConnect();
+							
 			reader = new dynaflex("", readerCallback);
 			
 			console.log('open reader');
 			await reader.open();
+		};
+		
+		async function disconnect() {
+			console.log('disconnecting from reader');
+			
+			if (reader != null)
+			{
+				console.log('close reader');
+				await reader.close();
+			}
 		};
 		
 		function readerCallback(eventType, eventData) {
