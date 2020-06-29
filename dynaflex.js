@@ -110,6 +110,7 @@ var dynaflex = (function () {
 	};
 	
 	dynaflex.prototype.closeWSDevice = async function () {
+		
 	};
 	
 	dynaflex.prototype.closeHIDDevice = function () {
