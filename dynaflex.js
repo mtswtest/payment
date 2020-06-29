@@ -35,7 +35,7 @@ var dynaflex = (function () {
 	dynaflex.prototype.isWebSocket = function() {
 		if (this.url != null)
 		{
-			if (this.url.startsWith('ws:') || this.url.startsWith('wss:'))
+			if (this.url.startsWith('ws:') || this.url.startsWith('wss:')) 
 				return true; 
 		}
 		
