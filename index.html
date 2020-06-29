@@ -74,11 +74,11 @@
 	</section>   
 	
 	<script>
-		var readerState = 'disconnected';
+		var ReaderState = 'disconnected';
 		
 		function onClickConnectButton() {
 
-			if ($readerState == 'disconnected')
+			if (ReaderState == 'disconnected')
 			{
 				connect();
 			}
@@ -138,7 +138,7 @@
 					$('#connectButton').text('Connect');
 				}
 				
-				readerState = eventData;
+				ReaderState = eventData;
 			}
 
 		};
