@@ -50,6 +50,7 @@ var dynaflex = (function () {
 	};
 	
 	async function openWSDevice() {
+		
 	};
 	
 	dynaflex.prototype.openHIDDevice = async function () {		
