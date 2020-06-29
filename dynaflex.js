@@ -33,7 +33,7 @@ var dynaflex = (function () {
 	};
 	 
 	dynaflex.prototype.isWebSocket = function () {
-		return (this.url != null) && ((this.url.startsWith('ws://') || (this.url.startsWith('wss://')));
+		return ((this.url != null) && ((this.url.startsWith('ws://') || (this.url.startsWith('wss://')));
 	};
 	
 	dynaflex.prototype.open = async function () {
