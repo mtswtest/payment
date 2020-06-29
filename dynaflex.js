@@ -8,6 +8,7 @@ var dynaflex = (function () {
 	
     function dynaflex(url, callback) {
 		context = this;		
+		this.url = url;
 		this.eventCallback = callback;
 		this.hiddevice = null; 
 				
@@ -31,19 +32,34 @@ var dynaflex = (function () {
 		context.sendEvent('data', data); 
 	};
 	 
-	var handleInputReport = function(e) {
-		let responseValue = e.data;
-		console.log('Device Response: ' + responseValue);
-		console.log('Length: ' + responseValue.byteLength);
-				 
-		databuffer = new Uint8Array(responseValue.buffer); 
-		data = byteToHexString(databuffer);
-		console.log('Device Response: ' + data);	
-		
-		this.processData(data);
+
+	dynaflex.prototype.isWebSocket = function () {
+		return (this.url != null) && ((this.url.startsWith('ws://') || (this.url.startsWith('wss://')));
 	};
 	
 	dynaflex.prototype.open = async function () {
+		if (isWebSocket())
+			openWSDevice();
+		else
+			openHIDDevice();
+	};
+	
+	dynaflex.prototype.openWSDevice = async function () {
+	};
+	
+	dynaflex.prototype.openHIDDevice = async function () {		
+		var handleInputReport = function(e) {
+			let responseValue = e.data;
+			console.log('Device Response: ' + responseValue);
+			console.log('Length: ' + responseValue.byteLength);
+					 
+			databuffer = new Uint8Array(responseValue.buffer); 
+			data = byteToHexString(databuffer);
+			console.log('Device Response: ' + data);	
+			
+			this.processData(data);
+		};
+	
 		let deviceFilter = { vendorId: 0x0801, productId: 0x2020 };
 		let requestParams  = { filters: [deviceFilter] };
 
@@ -80,7 +96,17 @@ var dynaflex = (function () {
         console.log('done');
     };
 	
-	dynaflex.prototype.close = function () {
+	dynaflex.prototype.close = async function () {
+		if (isWebSocket())
+			closeWSDevice();
+		else
+			closeHIDDevice();
+	};
+	
+	dynaflex.prototype.closeWSDevice = async function () {
+	};
+	
+	dynaflex.prototype.closeHIDDevice = function () {
 		console.log('Closing HID device');
 								
 		if (this.hiddevice != null)
