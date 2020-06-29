@@ -29,7 +29,7 @@ var dynaflex = (function () {
 	
 	dynaflex.prototype.processData = function(data) {
 		console.log('processData: ' + data);	
-		context.sendEvent('data', data); 
+		context.sendEvent('data', data);  
 	};
 	 
 	function isWebSocket() {
