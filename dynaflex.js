@@ -44,9 +44,9 @@ var dynaflex = (function () {
 	
 	dynaflex.prototype.open = async function () {
 		if (this.isWebSocket())
-			openWSDevice();
+			this.openWSDevice();
 		else
-			openHIDDevice();
+			this.openHIDDevice();
 	};
 	
 	async function openWSDevice() {
@@ -104,9 +104,9 @@ var dynaflex = (function () {
 	
 	dynaflex.prototype.close = async function () {
 		if (this.isWebSocket())
-			closeWSDevice();
+			this.closeWSDevice();
 		else
-			closeHIDDevice();
+			this.closeHIDDevice();
 	};
 	
 	dynaflex.prototype.closeWSDevice = async function () {
