@@ -74,8 +74,12 @@
 	</section>   
 	
 	<script>
+		var ReaderURL = 'ws://192.168.254.117';
+
+		var Reader = null;
 		var ReaderState = 'disconnected';
 		
+	
 		function onClickConnectButton() {
 
 			if (ReaderState == 'disconnected')
@@ -88,37 +92,46 @@
 			}
 		};
 		
-		function showModalConnect() {
-			$('#modalConnect').modal();
+		async function connect() {
+			console.log('connecting to reader');
+					
 			var deviceModel = 'Reader';
 			var typeWebSocket = $('#typeWebSocket');
 			var typeUSBHID = $('#typeUSBHID');
+			
 			if (typeWebSocket[0].checked) 
+			{
 				deviceModel = 'DynaFlex (WebSocket)'; 
+				Reader = new dynaflex(ReaderURL, readerCallback);
+			}				
 			else if (typeUSBHID[0].checked) 
+			{
 				deviceModel = 'DynaFlex (USB/HID)';
-			$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
-		};
-		
-		async function connect() {
-			console.log('connecting to reader');
-			
-			showModalConnect();
-							
-			reader = new dynaflex("", readerCallback);
-			
-			console.log('open reader');
-			await reader.open();
+				Reader = new dynaflex("usb", readerCallback);
+			}
+
+			if (Reader != null)
+			{
+				$('#modalConnect').modal();
+				
+				$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
+						
+				console.log('open reader');
+				await Reader.open();
+			}
+
 		};
 		
 		async function disconnect() {
 			console.log('disconnecting from reader');
 			
-			if (reader != null)
+			if (Reader != null)
 			{
 				console.log('close reader');
 				await reader.close();
 			}
+			
+			Reader = null;
 		}; 
 		
 		function readerCallback(eventType, eventData) {
