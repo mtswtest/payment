@@ -43,7 +43,7 @@ var dynaflex = (function () {
 	}; 
 	
 	dynaflex.prototype.open = async function () {
-		if (isWebSocket())
+		if (this.isWebSocket())
 			openWSDevice();
 		else
 			openHIDDevice();
@@ -102,7 +102,7 @@ var dynaflex = (function () {
     };
 	
 	dynaflex.prototype.close = async function () {
-		if (isWebSocket())
+		if (this.isWebSocket())
 			closeWSDevice();
 		else
 			closeHIDDevice();
