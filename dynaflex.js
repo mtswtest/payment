@@ -32,11 +32,11 @@ var dynaflex = (function () {
 		context.sendEvent('data', data);  
 	};
 	 
-	dynaflex.prototype.isWebSocket = function()() {
+	dynaflex.prototype.isWebSocket = function() {
 		if (this.url != null)
 		{
 			if (this.url.startsWith('ws:') || this.url.startsWith('wss:'))
-				return true;
+				return true; 
 		}
 		
 		return false;
