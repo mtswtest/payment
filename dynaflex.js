@@ -82,21 +82,25 @@ var dynaflex = (function () {
 	
 	function onOpen(evt)
 	{
+		console.log('Opened WS device');
 		sendEvent('state', 'connected');
 	};
 	
 	function onClose(evt)
 	{
+		console.log('Closed WS device');
 		sendEvent('state', 'disconnected');
 	};
 	
 	function onError(evt)
 	{
+		console.log('WS device Error');
 		sendEvent('error', evt);
 	};	
 	
 	function onMessage(evt)
 	{
+		console.log('WS device Message');
 		processData(evt);
 	};
 	
@@ -112,7 +116,7 @@ var dynaflex = (function () {
 			
 			processData(data);
 		};
-	
+				
 		let deviceFilter = { vendorId: 0x0801, productId: 0x2020 };
 		let requestParams  = { filters: [deviceFilter] };
 
@@ -121,9 +125,13 @@ var dynaflex = (function () {
 			this.hiddevice = devices[0];
 		  } catch (error) {
 			console.warn('No device access granted', error);
+			sendEvent('error', error);
 			return;
 		  }
-		 
+		
+		console.log('Opening HID device');		
+		sendEvent('state', 'connecting');
+				
         console.log(this.hiddevice.productId);		 
         console.log(this.hiddevice.productName);
 		
@@ -145,23 +153,26 @@ var dynaflex = (function () {
 			    }
 			);
 		});
-         
-        console.log('done');
     };
 	
 	function closeWSDevice() {
+		console.log('Closing WS device');
+		sendEvent('state', 'disconnecting');
+		
 		context.websocket.close();
 	};
 	
 	function closeHIDDevice() {
 		console.log('Closing HID device');
-								
+		sendEvent('state', 'disconnecting');
+										
 		if (this.hiddevice != null)
 		{
 			this.hiddevice.close();
-			sendEvent('state', 'disconnected');
-			console.log('Closed HID device');
 		}
+
+		console.log('Closed HID device');
+		sendEvent('state', 'disconnected');
     };
 		
     dynaflex.prototype.send = function (data) {

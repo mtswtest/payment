@@ -112,10 +112,6 @@
 
 			if (Reader != null)
 			{
-				$('#modalConnect').modal();
-				
-				$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
-						
 				console.log('open reader');
 				await Reader.open();
 			}
@@ -139,10 +135,19 @@
 			
 			if (eventType == 'state')
 			{
-				if (eventData == 'connected')
+				if (eventData == 'connecting')
+				{
+					$('#modalConnect').modal();
+				
+					//$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
+						
+					$('#connectionStatus').text('Connecting to device...');
+					$('#connectButton').text('Disconnect'); 
+				}
+				else if (eventData == 'connected')
 				{
 					$('#connectionStatus').text('Connected to device');
-					$('#connectButton').text('Disconnect');
+					//$('#connectButton').text('Disconnect');
 					$('#modalConnect').modal("hide"); 
 				}
 				else if (eventData == 'disconnected')
