@@ -63,7 +63,7 @@ var dynaflex = (function () {
 		context.eventCallback(eventType, eventData);
 	};
 	
-	function processData(data) {
+	function processData(data) { 
 		console.log('processData: ' + data);	
 		sendEvent('data', data);  
 	};
