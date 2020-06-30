@@ -1,17 +1,28 @@
 
 
 var dynaflex = (function () {
+	
+	const PACKET_TYPE_SINGLE_DATA = 0; 
+    const PACKET_TYPE_START_DATA = 1;
+    const PACKET_TYPE_CONTINUE_DATA = 2;
+    const PACKET_TYPE_END_DATA = 3;
+    const PACKET_TYPE_CANCEL = 4;
+    const START_PAYLOAD_SIZE = 59;
+    const PACKET_CONTINUE_DATA_SIZE = 61;
+    const END_DATA_SIZE = 62; 
+    const SINGLE_DATA_SIZE = 62;
+	
 	var context = null;
-	var url = null;
-	var hiddevice = null; 
-	var websocket = null;
+	//var url = null;
+	//var hiddevice = null; 
+	//var websocket = null;
 	
     function dynaflex(url, callback) {
 		context = this;		
 		context.url = url;
-		this.eventCallback = callback;
-		this.hiddevice = null; 
-				
+		context.eventCallback = callback;
+		context.hiddevice = null; 
+/*				
         this.PACKET_TYPE_SINGLE_DATA = 0; 
         this.PACKET_TYPE_START_DATA = 1;
         this.PACKET_TYPE_CONTINUE_DATA = 2;
@@ -21,67 +32,75 @@ var dynaflex = (function () {
         this.PACKET_CONTINUE_DATA_SIZE = 61;
         this.END_DATA_SIZE = 62; 
         this.SINGLE_DATA_SIZE = 62;
+*/		
     };
 	
-	dynaflex.prototype.sendEvent = function(eventType, eventData) {
-		this.eventCallback(eventType, eventData);
-	};
-	
-	dynaflex.prototype.processData = function(data) {
-		console.log('processData: ' + data);	
-		context.sendEvent('data', data);  
+	dynaflex.prototype.open = function () {
+		if (isWebSocket()) 
+			openWSDevice(); 
+		else
+			openHIDDevice();
 	};
 	 
-	dynaflex.prototype.isWebSocket = function() {
-		if (this.url != null)
+	dynaflex.prototype.close = function () {
+		if (isWebSocket())
+			closeWSDevice();
+		else
+			closeHIDDevice();
+	};
+	
+	function isWebSocket() {
+		if (context.url != null)
 		{
-			if (this.url.startsWith('ws:') || this.url.startsWith('wss:')) 
+			if (context.url.startsWith('ws:') || context.url.startsWith('wss:')) 
 				return true; 
 		}
 		
 		return false;
 	}; 
 	
-	dynaflex.prototype.open = async function () {
-		if (this.isWebSocket()) 
-			openWSDevice(); 
-		else
-			this.openHIDDevice();
+	function sendEvent(eventType, eventData) {
+		context.eventCallback(eventType, eventData);
 	};
 	
-	async function openWSDevice() {
+	function processData(data) {
+		console.log('processData: ' + data);	
+		sendEvent('data', data);  
+	};
+	
+	function openWSDevice() {
 		context.websocket = new WebSocket(this.url);
 		
-    	context.websocket.onopen = function(evt) { context.onOpen(evt) };
+    	context.websocket.onopen = function(evt) { onOpen(evt) };
 
-    	context.websocket.onclose = function(evt) { context.onClose(evt) };
+    	context.websocket.onclose = function(evt) { onClose(evt) };
 
-    	context.websocket.onerror = function(evt) { context.onError(evt) };		
+    	context.websocket.onerror = function(evt) { onError(evt) };		
 
-    	context.websocket.onmessage = function(evt) { context.onMessage(evt) };
+    	context.websocket.onmessage = function(evt) { onMessage(evt) };
 	};
 	
 	function onOpen(evt)
 	{
-		context.sendEvent('state', 'connected');
+		sendEvent('state', 'connected');
 	};
 	
 	function onClose(evt)
 	{
-		context.sendEvent('state', 'disconnected');
+		sendEvent('state', 'disconnected');
 	};
 	
 	function onError(evt)
 	{
-		context.sendEvent('error', evt);
+		sendEvent('error', evt);
 	};	
 	
-	dynaflex.prototype.onMessage = function (evt)
+	function onMessage(evt)
 	{
-		this.processData(evt);
+		processData(evt);
 	};
 	
-	dynaflex.prototype.openHIDDevice = async function () {		
+	async function openHIDDevice() {		
 		var handleInputReport = function(e) {
 			let responseValue = e.data;
 			console.log('Device Response: ' + responseValue);
@@ -130,18 +149,11 @@ var dynaflex = (function () {
         console.log('done');
     };
 	
-	dynaflex.prototype.close = async function () {
-		if (this.isWebSocket())
-			this.closeWSDevice();
-		else
-			this.closeHIDDevice();
+	function closeWSDevice() {
+		context.websocket.close();
 	};
 	
-	dynaflex.prototype.closeWSDevice = async function () {
-		
-	};
-	
-	dynaflex.prototype.closeHIDDevice = function () {
+	function closeHIDDevice() {
 		console.log('Closing HID device');
 								
 		if (this.hiddevice != null)
@@ -151,7 +163,7 @@ var dynaflex = (function () {
 			console.log('Closed HID device');
 		}
     };
-	
+		
     dynaflex.prototype.send = function (data) {
 		console.log('sendData: ' + data);						
         var packets = this.getPackets(data);
