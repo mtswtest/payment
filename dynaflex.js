@@ -4,11 +4,11 @@ var dynaflex = (function () {
 	var context = null;
 	var url = null;
 	var hiddevice = null; 
-	var wsdevice = null;
+	var websocket = null;
 	
     function dynaflex(url, callback) {
 		context = this;		
-		this.url = url;
+		context.url = url;
 		this.eventCallback = callback;
 		this.hiddevice = null; 
 				
@@ -50,7 +50,35 @@ var dynaflex = (function () {
 	};
 	
 	async function openWSDevice() {
+		context.websocket = new WebSocket(this.url);
 		
+    	context.websocket.onopen = function(evt) { context.onOpen(evt) };
+
+    	context.websocket.onclose = function(evt) { context.onClose(evt) };
+
+    	context.websocket.onerror = function(evt) { context.onError(evt) };		
+
+    	context.websocket.onmessage = function(evt) { context.onMessage(evt) };
+	};
+	
+	function onOpen(evt)
+	{
+		context.sendEvent('state', 'connected');
+	};
+	
+	function onClose(evt)
+	{
+		context.sendEvent('state', 'disconnected');
+	};
+	
+	function onError(evt)
+	{
+		context.sendEvent('error', evt);
+	};	
+	
+	dynaflex.prototype.onMessage = function (evt)
+	{
+		this.processData(evt);
 	};
 	
 	dynaflex.prototype.openHIDDevice = async function () {		
