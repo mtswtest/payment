@@ -68,7 +68,7 @@ var dynaflex = (function () {
 		sendEvent('data', data);  
 	};
 	
-	function openWSDevice() {
+	function openWSDevice() { 
 		context.websocket = new WebSocket(context.url);
 		
     	context.websocket.onopen = function(evt) { onOpen(evt) };
