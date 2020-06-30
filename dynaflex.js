@@ -44,7 +44,7 @@ var dynaflex = (function () {
 	
 	dynaflex.prototype.open = async function () {
 		if (this.isWebSocket()) 
-			openWSDevice();
+			openWSDevice(); 
 		else
 			this.openHIDDevice();
 	};
