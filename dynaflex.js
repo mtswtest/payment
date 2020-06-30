@@ -110,7 +110,7 @@ var dynaflex = (function () {
 			data = byteToHexString(databuffer);
 			console.log('Device Response: ' + data);	
 			
-			this.processData(data);
+			processData(data);
 		};
 	
 		let deviceFilter = { vendorId: 0x0801, productId: 0x2020 };
@@ -130,7 +130,7 @@ var dynaflex = (function () {
 	
 		await this.hiddevice.open().then(() => {
 			console.log('Opened HID device');
-			context.sendEvent('state', 'connected');
+			sendEvent('state', 'connected');
 
 			this.hiddevice.addEventListener('inputreport', function(e) {
 					let responseValue = e.data;
@@ -159,7 +159,7 @@ var dynaflex = (function () {
 		if (this.hiddevice != null)
 		{
 			this.hiddevice.close();
-			context.sendEvent('state', 'disconnected');
+			sendEvent('state', 'disconnected');
 			console.log('Closed HID device');
 		}
     };
