@@ -16,12 +16,9 @@ function byteToHexString(uint8arr) {
 	return '';
   }
   
-  var hexStr = '';
-  for (var i = 0; i < uint8arr.length; i++) {
-	var hex = (uint8arr[i] & 0xff).toString(16);
-	hex = (hex.length === 1) ? '0' + hex : hex;
-	hexStr += hex;
-  }
+  var hexStr = '', h = '0123456789abcdef';
+  
+  (new Uint8Array(uint8arr)).forEach((v) => { hexStr += h[v >> 4] + h[v & 15]; }); 
   
   return hexStr.toUpperCase();
 }

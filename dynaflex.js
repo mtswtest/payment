@@ -13,26 +13,14 @@ var dynaflex = (function () {
     const SINGLE_DATA_SIZE = 62;
 	
 	var context = null;
-	//var url = null;
-	//var hiddevice = null; 
-	//var websocket = null;
 	
     function dynaflex(url, callback) {
 		context = this;		
+		
 		context.url = url;
 		context.eventCallback = callback;
+		context.websocket = null;
 		context.hiddevice = null; 
-/*				
-        this.PACKET_TYPE_SINGLE_DATA = 0; 
-        this.PACKET_TYPE_START_DATA = 1;
-        this.PACKET_TYPE_CONTINUE_DATA = 2;
-        this.PACKET_TYPE_END_DATA = 3;
-        this.PACKET_TYPE_CANCEL = 4;
-        this.START_PAYLOAD_SIZE = 59;
-        this.PACKET_CONTINUE_DATA_SIZE = 61;
-        this.END_DATA_SIZE = 62; 
-        this.SINGLE_DATA_SIZE = 62;
-*/		
     };
 	
 	dynaflex.prototype.open = function () {
@@ -48,6 +36,18 @@ var dynaflex = (function () {
 		else
 			closeHIDDevice();
 	};
+	    
+	dynaflex.prototype.send = function (data) {
+		if (isWebSocket())
+			sendWSDevice(data);
+		else
+			sendHIDDevice(data);
+    };
+	
+	dynaflex.prototype.startTransaction = function (data) {
+
+		context.send(data);
+    };
 	
 	function isWebSocket() {
 		if (context.url != null)
@@ -69,7 +69,14 @@ var dynaflex = (function () {
 	};
 	
 	function openWSDevice() { 
+		if (context.websocket != null)
+			return;
+	
+		console.log('Opening WS device');
+		sendEvent('state', 'connecting');
+		
 		context.websocket = new WebSocket(context.url);
+		context.websocket.binaryType = 'arraybuffer';
 		
     	context.websocket.onopen = function(evt) { onOpen(evt) };
 
@@ -88,6 +95,8 @@ var dynaflex = (function () {
 	
 	function onClose(evt)
 	{
+		context.websocket = null;
+		
 		console.log('Closed WS device');
 		sendEvent('state', 'disconnected');
 	};
@@ -122,7 +131,7 @@ var dynaflex = (function () {
 
 		try {
 			const devices = await navigator.hid.requestDevice(requestParams);
-			this.hiddevice = devices[0];
+			context.hiddevice = devices[0];
 		  } catch (error) {
 			console.warn('No device access granted', error);
 			sendEvent('error', error);
@@ -132,15 +141,15 @@ var dynaflex = (function () {
 		console.log('Opening HID device');		
 		sendEvent('state', 'connecting');
 				
-        console.log(this.hiddevice.productId);		 
-        console.log(this.hiddevice.productName);
+        console.log(context.hiddevice.productId);		 
+        console.log(context.hiddevice.productName);
 		
 	
-		await this.hiddevice.open().then(() => {
+		await context.hiddevice.open().then(() => {
 			console.log('Opened HID device');
 			sendEvent('state', 'connected');
 
-			this.hiddevice.addEventListener('inputreport', function(e) {
+			context.hiddevice.addEventListener('inputreport', function(e) {
 					let responseValue = e.data;
 					console.log('Device Response: ' + responseValue);
 					console.log('Length: ' + responseValue.byteLength);
@@ -156,6 +165,9 @@ var dynaflex = (function () {
     };
 	
 	function closeWSDevice() {
+		if (context.websocket == null)
+			return;
+		
 		console.log('Closing WS device');
 		sendEvent('state', 'disconnecting');
 		
@@ -163,26 +175,38 @@ var dynaflex = (function () {
 	};
 	
 	function closeHIDDevice() {
+		if (context.hiddevice == null)
+			return;
+		
 		console.log('Closing HID device');
 		sendEvent('state', 'disconnecting');
 										
-		if (this.hiddevice != null)
-		{
-			this.hiddevice.close();
-		}
+		context.hiddevice.close();
+		
+		context.hiddevice = null;
 
 		console.log('Closed HID device');
 		sendEvent('state', 'disconnected');
     };
 		
-    dynaflex.prototype.send = function (data) {
-		console.log('sendData: ' + data);						
+	function sendWSDevice(data) {
+		if (context.websocket == null)
+			return;
+		
+		//console.log('send: ' + data);	
+		
+		context.websocket.send(data);
+    };
+	
+	function sendHIDDevice(data) {
+		console.log('send: ' + data);				
+		
         var packets = this.getPackets(data);
         for (var i = 0; i < packets.length; i++) {
             {
                 var packet = packets[i];
 				console.log('sending packet: ' + packet);	
-				this.hiddevice.sendReport(0x00, packet).then(() => {
+				context.hiddevice.sendReport(0x00, packet).then(() => {
 					console.log('Packet sent');;	
 				});
             }
@@ -190,18 +214,18 @@ var dynaflex = (function () {
         }
     };
 	
-    dynaflex.prototype.getPackets = function (data) { 
-        if (data.length > this.SINGLE_DATA_SIZE) {
-            return this.getMultiplePackets(data);
+    function getPackets(data) { 
+        if (data.length > SINGLE_DATA_SIZE) {
+            return getMultiplePackets(data);
         }
         else {
             var result = ([]);
-            /* add */ (result.push(this.getSinglePacket(data)) > 0);
+            /* add */ (result.push(getSinglePacket(data)) > 0);
             return result;
         }
     };
 	
-    dynaflex.prototype.getSinglePacket = function (data) {
+    function getSinglePacket(data) {
         var len = 2;
         if (data != null) {
             len += data.length;
@@ -211,7 +235,7 @@ var dynaflex = (function () {
 		
 		//Uint8Array result = new Uint8Array(len);
 		
-        result[0] = this.PACKET_TYPE_SINGLE_DATA;
+        result[0] = PACKET_TYPE_SINGLE_DATA;
         result[1] = (data.length | 0);
         /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) { if (srcPts !== dstPts || dstOff >= srcOff + size) {
             while (--size >= 0)
@@ -226,11 +250,11 @@ var dynaflex = (function () {
 		return new Uint8Array(result);
     };
 	
-    dynaflex.prototype.getMultiplePackets = function (data) {
+    function getMultiplePackets(data) {
         var result = ([]);
         var p0 = (function (s) { var a = []; while (s-- > 0)
-            a.push(0); return a; })(5 + this.START_PAYLOAD_SIZE);
-        p0[0] = this.PACKET_TYPE_START_DATA;
+            a.push(0); return a; })(5 + START_PAYLOAD_SIZE);
+        p0[0] = PACKET_TYPE_START_DATA;
         var p0Len = getLengthArray(4, data.length);
         p0[1] = p0Len[0];
         p0[2] = p0Len[1];
@@ -244,16 +268,16 @@ var dynaflex = (function () {
             var tmp = srcPts.slice(srcOff, srcOff + size);
             for (var i_1 = 0; i_1 < size; i_1++)
                 dstPts[dstOff++] = tmp[i_1];
-        } })(data, 0, p0, 5, this.START_PAYLOAD_SIZE);
+        } })(data, 0, p0, 5, START_PAYLOAD_SIZE);
         /* add */ (result.push(new Uint8Array(p0)) > 0);
         var seq = 1;
-        var i = this.START_PAYLOAD_SIZE;
-        for (; i < data.length - this.END_DATA_SIZE; i += this.PACKET_CONTINUE_DATA_SIZE) {
+        var i = START_PAYLOAD_SIZE;
+        for (; i < data.length - END_DATA_SIZE; i += PACKET_CONTINUE_DATA_SIZE) {
             {
                 var pi = (function (s) { var a = []; while (s-- > 0)
-                    a.push(0); return a; })(3 + this.PACKET_CONTINUE_DATA_SIZE);
+                    a.push(0); return a; })(3 + PACKET_CONTINUE_DATA_SIZE);
                 var piLen = getLengthArray(2, seq);
-                pi[0] = this.PACKET_TYPE_CONTINUE_DATA;
+                pi[0] = PACKET_TYPE_CONTINUE_DATA;
                 pi[1] = piLen[0];
                 pi[2] = piLen[1];
                 /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) { if (srcPts !== dstPts || dstOff >= srcOff + size) {
@@ -264,7 +288,7 @@ var dynaflex = (function () {
                     var tmp = srcPts.slice(srcOff, srcOff + size);
                     for (var i_2 = 0; i_2 < size; i_2++)
                         dstPts[dstOff++] = tmp[i_2];
-                } })(data, i, pi, 3, this.PACKET_CONTINUE_DATA_SIZE);
+                } })(data, i, pi, 3, PACKET_CONTINUE_DATA_SIZE);
                 /* add */ (result.push(new Uint8Array(pi)) > 0);
                 seq++;
             }
@@ -272,7 +296,7 @@ var dynaflex = (function () {
         }
         var p1 = (function (s) { var a = []; while (s-- > 0)
             a.push(0); return a; })(2 + data.length - i);
-        p1[0] = this.PACKET_TYPE_END_DATA;
+        p1[0] = PACKET_TYPE_END_DATA;
         p1[1] = ((data.length - i) | 0);
         /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) { if (srcPts !== dstPts || dstOff >= srcOff + size) {
             while (--size >= 0)

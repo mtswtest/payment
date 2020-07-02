@@ -11,7 +11,7 @@
   <script src="dynaflex.js"></script>	 
   <script src="tlvparser.js"></script>	
 </head>
-<body>
+<body onLoad='onLoad()'>
   <main class="page payment-page">
     <section class="payment-form dark">
       <div class="container">
@@ -56,7 +56,7 @@
 					<div class="col-sm-8">
 						<div class="custom-control custom-radio custom-control-inline">
 							<input type="radio" class="custom-control-input" id="typeWebSocket" name="deviceType" checked>
-							<label class="custom-control-label" for="typeWebSocket">DynaFlex (WebSocket)</label>
+							<label class="custom-control-label" for="typeWebSocket" id="labelWebSocket">DynaFlex (WebSocket)</label>
 						</div>
 						<div class="custom-control custom-radio custom-control-inline">
 							<input type="radio" class="custom-control-input" id="typeUSBHID" name="deviceType">
@@ -65,20 +65,36 @@
 					</div>					
 				</div>	
 				<button type="button" class="btn btn-primary btn-block" id="connectButton" onClick="onClickConnectButton();">Connect</button>
-				<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#modalStart">Start Transaction</button>
+				<button type="button" class="btn btn-success btn-block" id="startButton" onClick="onClickStartButton();">Start Transaction</button>
 			</div>
-  
- 
 		</div>
         </form> 
 	</section>   
 	
 	<script>
-		var ReaderURL = 'ws://192.168.254.117';
-
+		var WebSocketURL = 'ws://192.168.254.117';
+		
 		var Reader = null;
 		var ReaderState = 'disconnected';
+		var PendingStartTransaction = false;
 		
+		function onLoad() {
+			params = new URLSearchParams(window.location.search);
+			deviceParam = params.get('device');
+			console.log('Param device=' + deviceParam);
+						
+			if ((deviceParam != null) && deviceParam.startsWith('ws'))
+			{
+				WebSocketURL = deviceParam;
+				$('#typeWebSocket')[0].checked = true;
+			}
+			else
+			{
+				$('#typeUSBHID')[0].checked = true;
+			}
+			
+			$('#labelWebSocket').text('DynaFlex (' + WebSocketURL + ')'); 
+		};
 	
 		function onClickConnectButton() {
 
@@ -92,9 +108,33 @@
 			}
 		};
 		
+		function onClickStartButton() {
+
+			if (ReaderState == 'disconnected')
+			{
+				PendingStartTransaction = true;
+				connect();
+				return;
+			}
+
+			PendingStartTransaction = false;
+			startTransaction();
+		};
+		
+		function startTransaction() {
+		
+			$('#modalStart').modal("show");
+			$('#transactionStatus').text('Sending echo command...');			
+			
+			command = "AA0081040100DF018407DF018103414243";
+			commandByteArray = hexStringToByte(command);
+		
+			Reader.send(commandByteArray);
+		};
+		
 		async function connect() {
 			console.log('connecting to reader');
-					
+			
 			var deviceModel = 'Reader';
 			var typeWebSocket = $('#typeWebSocket');
 			var typeUSBHID = $('#typeUSBHID');
@@ -102,20 +142,19 @@
 			if (typeWebSocket[0].checked) 
 			{
 				deviceModel = 'DynaFlex (WebSocket)'; 
-				Reader = new dynaflex(ReaderURL, readerCallback);
+				Reader = new dynaflex(WebSocketURL, readerCallback);
 			}				
 			else if (typeUSBHID[0].checked) 
 			{
-				deviceModel = 'DynaFlex (USB/HID)';
-				Reader = new dynaflex("usb", readerCallback);
-			}
+				deviceModel = 'DynaFlex (USB/HID)';	
+				Reader = new dynaflex('usb', readerCallback);
+			}	
 
 			if (Reader != null)
 			{
 				console.log('open reader');
 				await Reader.open();
 			}
-
 		};
 		 
 		async function disconnect() {
@@ -137,7 +176,7 @@
 			{
 				if (eventData == 'connecting')
 				{
-					$('#modalConnect').modal();
+					$('#modalConnect').modal("show");
 				
 					//$('#connectionStatus').text('Connecting to ' + deviceModel + ' . . . ');
 						
@@ -149,6 +188,12 @@
 					$('#connectionStatus').text('Connected to device');
 					//$('#connectButton').text('Disconnect');
 					$('#modalConnect').modal("hide"); 
+					
+					if (PendingStartTransaction)
+					{
+						PendingStartTransaction = false;
+						startTransaction();
+					}
 				}
 				else if (eventData == 'disconnected')
 				{
@@ -157,6 +202,11 @@
 				}
 				
 				ReaderState = eventData;
+			}
+			else if (eventType == 'data')
+			{
+				message = byteToHexString(eventData.data);
+				$('#transactionStatus').text('Received:' + message);			
 			}
 
 		};
@@ -214,7 +264,7 @@
 					<div class="spinner-border text-success"></div>
 				</div>			  
 				<div class="col-sm-8">
-					<p class="text-success" style="margin-bottom:18px">Starting Transaction ...</p>	 
+					<p class="text-success" id="transactionStatus" style="margin-bottom:18px">Starting Transaction ...</p>	 
 				</div>
 			</div>	
 		  </div>
